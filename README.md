@@ -73,7 +73,7 @@ And the following IDEs/Compilers
 - GCC 4.8.4, 4.9.3, 5.3.0 and 6.1.1 (C++03, C++11, C++14, C++1z)
 - Clang 3.5 and 3.8
 - Xcode 8
-- Visual Studio Community 2015
+- Visual Studio 2015 and 2017 (partly 2013)
 - Eclipse CDT under Linux
 
 ### Dependencies
@@ -136,7 +136,7 @@ Typical generic build for MS Visual Studio under Windows (from [build.bat](build
 mkdir build
 cd build
 
-cmake ..        # cmake .. -G "Visual Studio 10"    # for Visual Studio 2010
+cmake ..        # cmake .. -G "Visual Studio 14 2015"
 @REM Generate a Visual Studio solution for latest version found
 cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
 
@@ -185,8 +185,8 @@ You can either recompile it yourself (seek help online) or you can comment out t
 
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
 using the Travis CI community service with the above CMake building and testing procedure.
-It is also tested in the same way under Windows Server 2012 R2 with Visual Studio 2013 compiler
-using the AppVeyor countinuous integration service.
+It is also tested in the same way under Windows with Visual Studio 2013, 2015 and 2017
+compiler using the AppVeyor countinuous integration service.
 
 Detailed results can be seen online:
  - https://travis-ci.org/SRombauts/SQLiteCpp

@@ -36,7 +36,12 @@ TEST(Column, basis) {
     // Create a first row (autoid: 1) with all kind of data and a null value
     SQLite::Statement   insert(db, "INSERT INTO test VALUES (NULL, \"first\", -123, 0.123, ?, NULL)");
     // Bind the blob value to the first parameter of the SQL query
+    #ifdef SQLITECPP_NO_NULL_STRINGS
+    const char  buffer[] = {'b', 'l', '0', 'b'}; // "bl0b" : 4 char, with no null byte inside
+    #else
     const char  buffer[] = {'b', 'l', '\0', 'b'}; // "bl\0b" : 4 char, with a null byte inside
+    #endif
+    DNO_NULL_STRINGS
     const int   size = sizeof(buffer); // size = 4
     const void* blob = &buffer;
     insert.bind(1, blob, size);
