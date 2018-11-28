@@ -41,7 +41,6 @@ TEST(Column, basis) {
     #else
     const char  buffer[] = {'b', 'l', '\0', 'b'}; // "bl\0b" : 4 char, with a null byte inside
     #endif
-    DNO_NULL_STRINGS
     const int   size = sizeof(buffer); // size = 4
     const void* blob = &buffer;
     insert.bind(1, blob, size);
@@ -85,9 +84,15 @@ TEST(Column, basis) {
         EXPECT_EQ("first",      msg);
         EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
+        #ifdef SQLITECPP_NO_NULL_STRINGS
+        EXPECT_EQ(0,            memcmp("bl0b", pblob, size));
+        EXPECT_EQ((size_t)size, sblob.size());
+        EXPECT_EQ(0,            memcmp("bl0b", &sblob[0], size));
+        #else
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, size));
         EXPECT_EQ((size_t)size, sblob.size());
         EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], size));
+        #endif
         EXPECT_EQ(NULL,         pempty);
     }
 
@@ -111,8 +116,13 @@ TEST(Column, basis) {
         EXPECT_EQ("first",      msg2);
         EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
+        #ifdef SQLITECPP_NO_NULL_STRINGS
+        EXPECT_EQ(0,            memcmp("bl0b", pblob, 4));
+        EXPECT_EQ(0,            memcmp("bl0b", &sblob[0], 4));
+        #else
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, 4));
         EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], 4));
+        #endif
     }
 
     // Validate getBytes(), getType(), isInteger(), isNull()...
@@ -154,7 +164,11 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(4).isText());
     EXPECT_EQ(true,             query.getColumn(4).isBlob());
     EXPECT_EQ(false,            query.getColumn(4).isNull());
+    #ifdef SQLITECPP_NO_NULL_STRINGS
+    EXPECT_STREQ("bl0b",        query.getColumn(4).getText());  // convert to string
+    #else
     EXPECT_STREQ("bl\0b",       query.getColumn(4).getText());  // convert to string
+    #endif
     EXPECT_EQ(4,                query.getColumn(4).getBytes()); // size of the blob "bl\0b" with the null char
     EXPECT_EQ(SQLite::Null,     query.getColumn(5).getType());
     EXPECT_EQ(false,            query.getColumn(5).isInteger());

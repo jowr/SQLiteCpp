@@ -23,6 +23,11 @@ environment:
   matrix:
   - arch: Win32
   - arch: Win64
+
+matrix:
+  allow_failures:
+    - image: Visual Studio 2013
+
   
 init:
   - echo %APPVEYOR_BUILD_WORKER_IMAGE% - %configuration% - %arch%

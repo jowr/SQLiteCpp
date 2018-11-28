@@ -73,7 +73,7 @@ And the following IDEs/Compilers
 - GCC 4.8.4, 4.9.3, 5.3.0 and 6.1.1 (C++03, C++11, C++14, C++1z)
 - Clang 3.5 and 3.8
 - Xcode 8
-- Visual Studio 2015 and 2017 (partly 2013)
+- Visual Studio 2015 and 2017 (partly 2013, does not support blob columns)
 - Eclipse CDT under Linux
 
 ### Dependencies
