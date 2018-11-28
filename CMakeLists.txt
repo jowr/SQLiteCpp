@@ -298,7 +298,8 @@ if (SQLITECPP_BUILD_TESTS)
     
     # Add flags for MSVC 2017
     if (MSVC_TOOLSET_VERSION EQUAL 141)
-      target_compile_definitions(gtest_main PRIVATE _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+      target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+      #add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
     endif (MSVC_TOOLSET_VERSION EQUAL 141)
 
     # add the unit test executable
