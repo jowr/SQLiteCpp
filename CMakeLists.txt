@@ -305,6 +305,8 @@ if (SQLITECPP_BUILD_TESTS)
     endif ()
     
     # Add flags for MSVC 2017
+    message(STATUS MSVC_TOOLSET_VERSION: ${MSVC_TOOLSET_VERSION})
+    message(STATUS MSVC_VERSION: ${MSVC_VERSION})
     if (MSVC_TOOLSET_VERSION EQUAL 141)
       #target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
       #target_compile_definitions(SQLiteCpp_tests PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
