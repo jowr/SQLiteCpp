@@ -34,7 +34,8 @@ if (MSVC)
     if (MSVC_TOOLSET_VERSION LESS 140)
       message(WARNING "Visual Studio prior to 2015 is not fully supported. Char arrays or strings with a NULL character will get truncated.")
       add_definitions(-DSQLITECPP_NO_NULL_STRINGS)
-    endif (MSVC_TOOLSET_VERSION LESS 140)
+    endif (MSVC_TOOLSET_VERSION LESS 140)    
+    # Add deprecation flags for MSVC 2017
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
@@ -295,6 +296,15 @@ if (SQLITECPP_BUILD_TESTS)
     endif ()
     add_subdirectory(googletest)
     include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
+    
+    if (MSVC_TOOLSET_VERSION EQUAL 141)
+      target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+      target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+      target_compile_definitions(gmock PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+      target_compile_definitions(gmock_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+      #target_compile_definitions(SQLiteCpp_tests PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+      #add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+    endif (MSVC_TOOLSET_VERSION EQUAL 141)
 
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
@@ -303,15 +313,6 @@ if (SQLITECPP_BUILD_TESTS)
     if (UNIX AND NOT APPLE)
         target_link_libraries(SQLiteCpp_tests dl)
     endif ()
-    
-    # Add flags for MSVC 2017
-    message(STATUS MSVC_TOOLSET_VERSION: ${MSVC_TOOLSET_VERSION})
-    message(STATUS MSVC_VERSION: ${MSVC_VERSION})
-    if (MSVC_TOOLSET_VERSION EQUAL 141)
-      #target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-      #target_compile_definitions(SQLiteCpp_tests PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-      add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-    endif (MSVC_TOOLSET_VERSION EQUAL 141)
 
     # add a "test" target:
     enable_testing()
