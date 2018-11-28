@@ -1,3 +1,6 @@
 [submodule "googletest"]
 	path = googletest
 	url = https://github.com/google/googletest.git
+[submodule "wxsqlite3"]
+	path = wxsqlite3
+	url = https://github.com/jowr/wxsqlite3.git
