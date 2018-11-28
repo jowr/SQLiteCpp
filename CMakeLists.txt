@@ -22,10 +22,6 @@ if (MSVC)
     set(CPPCHECK_ARG_TEMPLATE   "--template=vs")
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    # Add flags for MSVC 2017
-    if (MSVC_TOOLSET_VERSION EQUAL 141)
-      add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-    endif (MSVC_TOOLSET_VERSION EQUAL 141)
     # Flags for linking with multithread static C++ runtime, required by googletest
     if (SQLITECPP_BUILD_TESTS)
         message(STATUS "Linking against multithread static C++ runtime for unit tests with googletest")
@@ -294,6 +290,11 @@ if (SQLITECPP_BUILD_TESTS)
     endif ()
     add_subdirectory(googletest)
     include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
+    
+    # Add flags for MSVC 2017
+    if (MSVC_TOOLSET_VERSION EQUAL 141)
+      target_compile_definitions(gtest_main PRIVATE _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+    endif (MSVC_TOOLSET_VERSION EQUAL 141)
 
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
