@@ -205,13 +205,21 @@ install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
 #endif()
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
-if (SQLITECPP_INTERNAL_SQLITE)
+option(SQLITECPP_INTERNAL_SQLITE_SEE "Add the wxSQLite3 sources to the project to enable encryption." OFF)
+if (SQLITECPP_INTERNAL_SQLITE OR SQLITECPP_INTERNAL_SQLITE_SEE)
+  if (SQLITECPP_INTERNAL_SQLITE_SEE)
+    add_subdirectory(wxsqlite3/cmake)
+    include_directories("${PROJECT_SOURCE_DIR}/wxsqlite3/sqlite3secure/src")
+    #target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/wxsqlite3/sqlite3secure/src")
+    add_library(sqlite3 ALIAS sqlite3dll)
+    #add_definitions(-DSQLITE_HAS_CODEC)
+  else(SQLITECPP_INTERNAL_SQLITE_SEE)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
     target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
-endif (SQLITECPP_INTERNAL_SQLITE)
-
+  endif (SQLITECPP_INTERNAL_SQLITE_SEE)
+endif (SQLITECPP_INTERNAL_SQLITE OR SQLITECPP_INTERNAL_SQLITE_SEE)
 
 # Optional additional targets:
 
