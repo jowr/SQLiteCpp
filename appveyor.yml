@@ -22,7 +22,13 @@ configuration:
 environment:
   matrix:
   - arch: Win32
+    see: ON
+  - arch: Win32
+    see: OFF
   - arch: Win64
+    see: ON
+  - arch: Win64
+    see: OFF
 
 matrix:
   allow_failures:
@@ -41,7 +47,7 @@ init:
 before_build:
   - mkdir build
   - cd build
-  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF .. -G %generator%
+  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_INTERNAL_SQLITE_SEE=%see% .. -G %generator%
 
 # build examples, and run tests (ie make & make test)
 build_script:
