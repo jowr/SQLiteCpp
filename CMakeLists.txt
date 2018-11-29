@@ -211,7 +211,7 @@ if (SQLITECPP_INTERNAL_SQLITE OR SQLITECPP_INTERNAL_SQLITE_SEE)
     add_subdirectory(wxsqlite3/cmake)
     include_directories("${PROJECT_SOURCE_DIR}/wxsqlite3/sqlite3secure/src")
     #target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/wxsqlite3/sqlite3secure/src")
-    add_library(sqlite3 ALIAS sqlite3lib)
+    #add_library(sqlite3 ALIAS sqlite3lib)
     add_definitions(-DSQLITE_HAS_CODEC)
   else(SQLITECPP_INTERNAL_SQLITE_SEE)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package

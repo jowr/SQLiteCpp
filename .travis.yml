@@ -164,12 +164,6 @@ matrix:
         - CXXFLAGS=-lstdc++
     # Default configurations with SEE enabled
     - compiler: gcc
-      env:
-        - CC=gcc
-        - CXX=g++
-        - CXXFLAGS="-Wall -Wextra -pedantic"
-        - SQLITECPP_SEE="-DSQLITECPP_INTERNAL_SQLITE_SEE=ON"
-    - compiler: gcc
       addons:
         apt:
           sources:
