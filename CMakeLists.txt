@@ -179,6 +179,7 @@ add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLIT
 # make the sqlite3 library part of the interface of the SQLiteCpp wrapper itself (the client app does not need to link to sqlite3)
 # PR https://github.com/SRombauts/SQLiteCpp/pull/111 "linked SQLiteCpp to sqlite3" commented out since it breacks install step from PR #118
 #target_link_libraries(SQLiteCpp PUBLIC sqlite3)
+#add_sqlite3_to_target(SQLiteCpp)
 
 if(WIN32)
   set_target_properties(SQLiteCpp PROPERTIES DEBUG_POSTFIX "d")
@@ -211,18 +212,18 @@ install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 option(SQLITECPP_INTERNAL_SQLITE_SEE "Add the wxSQLite3 sources to the project to enable encryption." OFF)
 if (SQLITECPP_INTERNAL_SQLITE OR SQLITECPP_INTERNAL_SQLITE_SEE)
-  if (SQLITECPP_INTERNAL_SQLITE_SEE)
+  # build the SQLite3 library (for ease of use/compatibility) versus Linux sqlite3-dev package
+  if (SQLITECPP_INTERNAL_SQLITE_SEE) # use the wxSQLite3 code that supports encrypted databases
+    option(SQLITE3_BUILD_SHARED_LIBS "Use a shared library for SQLite3" ON) # code is LGPL
     add_subdirectory(wxsqlite3/cmake)
-    include_directories("${PROJECT_SOURCE_DIR}/wxsqlite3/sqlite3secure/src")
-    #target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/wxsqlite3/sqlite3secure/src")
-    #add_library(sqlite3 ALIAS sqlite3lib)
+    #include_directories("wxsqlite3/sqlite3secure/src")
     add_definitions(-DSQLITE_HAS_CODEC)
-  else(SQLITECPP_INTERNAL_SQLITE_SEE)
-    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
+  else(SQLITECPP_INTERNAL_SQLITE_SEE) # use the standard SQLite3 C library
+    option(SQLITE3_BUILD_SHARED_LIBS "Use a shared library for SQLite3" OFF) # code is public domain
     add_subdirectory(sqlite3)
-    include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
-    target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
+    #include_directories(sqlite3)
   endif (SQLITECPP_INTERNAL_SQLITE_SEE)
+  include_directories($<TARGET_PROPERTY:sqlite3,INCLUDE_DIRECTORIES>)
 endif (SQLITECPP_INTERNAL_SQLITE OR SQLITECPP_INTERNAL_SQLITE_SEE)
 
 # Optional additional targets:
@@ -278,7 +279,8 @@ option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
-    target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
+    target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
+    add_sqlite3_to_target(SQLiteCpp_example1)
     # Link target with pthread and dl for linux
     if (UNIX)
         target_link_libraries(SQLiteCpp_example1 pthread)
@@ -317,7 +319,8 @@ if (SQLITECPP_BUILD_TESTS)
 
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
-    target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
+    target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp)
+    add_sqlite3_to_target(SQLiteCpp_tests)
     # Link target with dl for linux
     if (UNIX AND NOT APPLE)
         target_link_libraries(SQLiteCpp_tests dl)
